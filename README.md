@@ -63,5 +63,5 @@ def log_to_debug(param: str, arg_name: str):
 
 @validate_parameters
 def foo(df: log_to_debug(str)):
-    # ingest
+    # do something
 ```
