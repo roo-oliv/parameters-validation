@@ -5,6 +5,39 @@ from parameters_validation.parameter_validation_decorator import parameter_valid
 
 
 @parameter_validation
+def strongly_typed(param: object, arg_name: str, arg_type: type):
+    """
+    Validation to reject null, empty or blank strings.
+
+    >>> from parameters_validation import validate_parameters
+    ...
+    ... @validate_parameters
+    ... def foo(bar: strongly_typed(str)):
+    ...     print(bar)
+    ...
+    ... foo("")    # valid: parameter is a string
+    ... foo(None)  # invalid: NoneType does not inherit from string
+    ... foo(1)     # invalid: integer does not inherit from string
+
+    :param param: the parameter's value being validated
+    :param arg_name: the argument name for this parameter (provided by the :meth:`parameter_validation` decorator)
+    :param arg_type: the argument type for this parameter (provided by the :meth:`parameter_validation` decorator)
+    :return: None
+    :raises TypeError: invalid parameter, i.e. :param param: has type that doesn't inherits from the expected :param arg_type:
+    """
+    validation_error = None
+    arg = arg_name
+    try:
+        arg += " <{t}>".format(t=arg_type.__name__)
+        if not isinstance(param, arg_type):
+            validation_error = TypeError("`{arg}` must be of type `{arg_type}`".format(arg=arg, arg_type=arg_type))
+    except:  # TODO: fail at function definition time
+        raise RuntimeError("`strongly_typed` validation must receive the type to enforce")
+    if validation_error:
+        raise validation_error
+
+
+@parameter_validation
 def non_blank(string: str, arg_name: str, arg_type: type = str):
     """
     Validation to reject null, empty or blank strings.
