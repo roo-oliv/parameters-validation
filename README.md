@@ -1,6 +1,8 @@
 # parameters-validation
 Easy &amp; clean function parameters validation
 
+[![Build Status](https://travis-ci.org/allrod5/parameters-validation.svg?branch=master)](https://travis-ci.org/allrod5/parameters-validation) [![Coverage Status](https://coveralls.io/repos/github/allrod5/parameters-validation/badge.svg?branch=master)](https://coveralls.io/github/allrod5/parameters-validation?branch=master) [![Supported Python Versions](https://img.shields.io/pypi/pyversions/parameters-validation.svg)](https://pypi.org/project/parameters-validation/) [![Latest Version](https://img.shields.io/pypi/v/parameters-validation.svg)](https://pypi.org/project/parameters-validation/) [![License](https://img.shields.io/github/license/allrod5/parameters-validation.svg)](https://github.com/allrod5/parameters-validation/blob/master/LICENSE)
+
 ## Usage
 
 Decorate your function with `@validate_parameters` and define validations to
