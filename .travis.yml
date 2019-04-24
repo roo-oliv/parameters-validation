@@ -1,9 +1,10 @@
-sudo: false
-
 language: python
+sudo: required
+dist: xenial
 
 python:
   - 3.5
+  - 3.6
   - 3.7
 
 install:

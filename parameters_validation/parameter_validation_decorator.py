@@ -35,11 +35,13 @@ def parameter_validation(func):
         return func(parameter, **kwargs)
 
     def func_partial(arg_type: type = None):
+        nested_validation = None
+        if hasattr(arg_type, "_parameter_validation"):
+            nested_validation = arg_type
+            arg_type = nested_validation._arg_type
+
         def validation_partial(parameter, arg_name: str):
-            nonlocal arg_type
-            if hasattr(arg_type, "_parameter_validation"):
-                nested_validation = arg_type
-                arg_type = nested_validation._arg_type
+            if nested_validation:
                 nested_validation(parameter, arg_name)
             validation(parameter, arg_name, arg_type)
 
