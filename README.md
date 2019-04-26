@@ -33,7 +33,7 @@ pip install parameters-validation
 
 ## Custom validations
 
-Creating your own validations is as easy as decorating the validation function
+Creating your own validation is as easy as decorating the validation function
 with `@parameter_validation`:
 
 ```python
@@ -64,4 +64,46 @@ def log_to_debug(param: str, arg_name: str):
 @validate_parameters
 def foo(df: log_to_debug(str)):
     # do something
+```
+
+## When to validate parameters
+
+It is a pythonic convention follow the [EAFP](https://docs.python.org/3/glossary.html#term-eafp) principle whenever possible. There are cases however that skipping validations leads to silent errors and big headaches. Let's use an illustrative example:
+
+```python
+from pyspark.sql import DataFrame
+
+def persist_to_s3(df: DataFrame, path: str):
+    df.write.parquet(path)
+```
+
+This code is perfectly fine but assume that there is a business requirement that all persisted dataframes contain a `ts` column with the data timestamp.
+
+Blindly following [EAFP](https://docs.python.org/3/glossary.html#term-eafp) the code is left unchanged but other developers can write dataframes without the `ts` column and no error will be logged. In the worst case it can lead to tons of data being saved wrong and rendered useless.
+
+[EAFP](https://docs.python.org/3/glossary.html#term-eafp) works well when code is still able to deal with exception scenarios where it will eventually break. In the example above a validation to the dataframe is appropriate:
+
+```python
+from pyspark.sql import DataFrame
+
+def persist_to_s3(df: DataFrame, path: str):
+    if "ts" not in df.columns:
+        raise ValueError("dataframe is missing a `ts` column")
+    df.write.parquet(path)
+```
+
+`parameters-validation` package helps you being more declarative in your validations stating them right at the function's signature and avoiding polution of your function's body with validation code:
+
+```python
+from pyspark.sql import DataFrame
+from parameters_validation import parameter_validation, validate_parameters
+
+@parameter_validation
+def with_ts_column(df: DataFrame):
+     if "ts" not in df.columns:
+        raise ValueError("dataframe is missing a `ts` column")
+
+@validate_parameters
+def persist_to_s3(df: with_ts_column(DataFrame), path: str):
+    df.write.parquet(path)
 ```
