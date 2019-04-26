@@ -9,10 +9,13 @@ Decorate your function with `@validate_parameters` and define validations to
 each parameter.
 
 ```python
-from parameters_validation import no_whitespaces, non_blank, non_empty, non_negative, validate_parameters
+from parameters_validation import no_whitespaces, non_blank, non_empty, non_negative, strongly_typed, validate_parameters
+
+from  my_app.auth import AuthToken
 
 @validate_parameters
 def register(
+    token: strongly_typed(AuthToken),
     name: non_blank(str),
     age: non_negative(int),
     nickname: no_whitespaces(non_empty(str)),
@@ -22,8 +25,8 @@ def register(
 ```
 
 Then at every function call parameters passed will be validated before actually
-executing it and raise a `ValueError` or do anything else in case of
-custom-defined validations.
+executing it and raise an error or do anything else in case of custom-defined
+validations.
 
 ### Install
 

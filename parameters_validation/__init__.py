@@ -1,5 +1,5 @@
 from parameters_validation.builtin_validations import non_empty, non_null, \
-    non_blank, no_whitespaces, non_negative
+    non_blank, no_whitespaces, non_negative, strongly_typed
 from parameters_validation.validate_parameters_decorator import validate_parameters
 from parameters_validation.parameter_validation_decorator import parameter_validation
 
@@ -11,4 +11,5 @@ __all__ = [
     non_empty,
     no_whitespaces,
     non_negative,
+    strongly_typed,
 ]
