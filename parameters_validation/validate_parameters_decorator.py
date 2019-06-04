@@ -33,6 +33,6 @@ def validate_parameters(func):
                 continue
             annotation(parameters[parameter], parameter)
 
-        func(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
