@@ -37,14 +37,14 @@ def validate_parameters(func):
         for arg_value, parameter in zip(args, specs.args):
             parameters[parameter] = arg_value
         if specs.defaults:
-            for default_parameter, default_value in zip(specs.args, specs.defaults):
+            for default_parameter, default_value in zip(
+                    specs.args[len(specs.args)-len(specs.defaults):], specs.defaults
+            ):
                 if default_parameter in parameters:
                     pass
                 parameters[default_parameter] = default_value
         if specs.kwonlydefaults:
-            for default_parameter, default_value in zip(
-                    specs.kwonlyargs, specs.kwonlydefaults
-            ):
+            for default_parameter, default_value in specs.kwonlydefaults.items():
                 if default_parameter in parameters:
                     pass
                 parameters[default_parameter] = default_value
