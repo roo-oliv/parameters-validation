@@ -1,7 +1,13 @@
+from typing import Union
+
 import pytest
 
 from parameters_validation import validate_parameters, non_blank, non_null, \
     non_empty, no_whitespaces, non_negative, strongly_typed
+
+
+class StrLike(str):
+    pass
 
 
 @validate_parameters
@@ -12,8 +18,11 @@ def foo(
     d: no_whitespaces(),
     e: non_negative(),
     f: strongly_typed(str),
+    g: strongly_typed(str),
+    h: strongly_typed(StrLike),
+    i: strongly_typed(Union[str, int])
 ):
-    return a, b, c, d, e, f
+    return a, b, c, d, e, f, g, h, i
 
 
 @validate_parameters
@@ -23,31 +32,31 @@ def bar(a: strongly_typed()):
 
 class TestBuiltinValidations:
     def test_success(self):
-        foo("non-blank", "", [None], "", 42, "")
+        foo("non-blank", "", [None], "", 42, "", StrLike(), StrLike(), 73)
 
     def test_non_blank(self):
         with pytest.raises(ValueError):
-            foo(" ", "", [None], "", 42, "")
+            foo(" ", "", [None], "", 42, "", StrLike(), StrLike(), 73)
 
     def test_non_null(self):
         with pytest.raises(ValueError):
-            foo("non-blank", None, [None], "", 42, "")
+            foo("non-blank", None, [None], "", 42, "", StrLike(), StrLike(), 73)
 
     def test_non_empty(self):
         with pytest.raises(ValueError):
-            foo("non-blank", "", [], "", 42, "")
+            foo("non-blank", "", [], "", 42, "", StrLike(), StrLike(), 73)
 
     def test_no_whitespaces(self):
         with pytest.raises(ValueError):
-            foo("non-blank", "", [None], "white spaced", 42, "")
+            foo("non-blank", "", [None], "white spaced", 42, "", StrLike(), StrLike(), 73)
 
     def test_non_negative(self):
         with pytest.raises(ValueError):
-            foo("non-blank", "", [None], "", -42, "")
+            foo("non-blank", "", [None], "", -42, "", StrLike(), StrLike(), 73)
 
     def test_strongly_typed(self):
         with pytest.raises(TypeError):
-            foo("non-blank", "", [None], "", 42, 7)
+            foo("non-blank", "", [None], "", 42, 7, StrLike(), StrLike(), 73)
 
     def test_strongly_typed_incorrect_usage(self):
         with pytest.raises(RuntimeError):

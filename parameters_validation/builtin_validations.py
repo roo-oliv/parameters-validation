@@ -1,13 +1,27 @@
 from numbers import Number
-from typing import Sized
+from typing import Sized, Union
 
 from parameters_validation.parameter_validation_decorator import parameter_validation
+
+
+def _get_arg_type_as_str(arg_type: type) -> str:
+    # TODO: Write me! I'm incomplete
+    try:
+        return str(arg_type.__name__)
+    except AttributeError:
+        pass
+    try:
+        if arg_type.__origin__ == Union:
+            return "Union{t}".format([_get_arg_type_as_str(union_type) for union_type in arg_type.__args__])
+    except AttributeError:
+        pass
+    raise RuntimeError("Unsupported type")
 
 
 @parameter_validation
 def strongly_typed(param: object, arg_name: str, arg_type: type):
     """
-    Validation to reject null, empty or blank strings.
+    Validation to reject wrong typed parameters.
 
     >>> from parameters_validation import validate_parameters
     ...
@@ -28,7 +42,8 @@ def strongly_typed(param: object, arg_name: str, arg_type: type):
     validation_error = None
     arg = arg_name
     try:
-        arg += " <{t}>".format(t=arg_type.__name__)
+        # TODO: Refactor me!
+        arg += _get_arg_type_as_str(arg_type)
         if not isinstance(param, arg_type):
             validation_error = TypeError("`{arg}` must be of type `{arg_type}`".format(arg=arg, arg_type=arg_type))
     except:  # TODO: fail at function definition time
