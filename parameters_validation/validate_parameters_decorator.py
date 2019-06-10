@@ -24,15 +24,30 @@ def validate_parameters(func):
     specs = inspect.getfullargspec(func)
     @wraps(func)
     def wrapper(*args, **kwargs):
-        parameters = kwargs.copy()
-        for arg_value, parameter in zip(args, specs.args):
-            parameters[parameter] = arg_value
-
+        parameters = get_parameter_value_dict(args, kwargs)
         for parameter, annotation in specs.annotations.items():
             if not hasattr(annotation, "_parameter_validation"):
                 continue
             annotation(parameters[parameter], parameter)
 
         return func(*args, **kwargs)
+
+    def get_parameter_value_dict(args, kwargs):
+        parameters = kwargs.copy()
+        for arg_value, parameter in zip(args, specs.args):
+            parameters[parameter] = arg_value
+        if specs.defaults:
+            for default_parameter, default_value in zip(specs.args, specs.defaults):
+                if default_parameter in parameters:
+                    pass
+                parameters[default_parameter] = default_value
+        if specs.kwonlydefaults:
+            for default_parameter, default_value in zip(
+                    specs.kwonlyargs, specs.kwonlydefaults
+            ):
+                if default_parameter in parameters:
+                    pass
+                parameters[default_parameter] = default_value
+        return parameters
 
     return wrapper
