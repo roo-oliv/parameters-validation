@@ -41,12 +41,12 @@ def validate_parameters(func):
                     specs.args[len(specs.args)-len(specs.defaults):], specs.defaults
             ):
                 if default_parameter in parameters:
-                    pass
+                    continue
                 parameters[default_parameter] = default_value
         if specs.kwonlydefaults:
             for default_parameter, default_value in specs.kwonlydefaults.items():
                 if default_parameter in parameters:
-                    pass
+                    continue
                 parameters[default_parameter] = default_value
         return parameters
 
