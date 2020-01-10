@@ -28,7 +28,10 @@ def strongly_typed(param: object, arg_name: str, arg_type: type):
     validation_error = None
     arg = arg_name
     try:
-        arg += " <{t}>".format(t=arg_type._name)
+        try:
+            arg += " <{t}>".format(t=arg_type.__name__)
+        except AttributeError:
+            arg += " <{t}>".format(t=arg_type._name)
         if not isinstance(param, arg_type):
             validation_error = TypeError("`{arg}` must be of type `{arg_type}`".format(arg=arg, arg_type=arg_type))
     except:  # TODO: fail at function definition time
@@ -63,7 +66,10 @@ def non_blank(string: str, arg_name: str, arg_type: type = str):
     validation_error = None
     arg = arg_name
     if arg_type is not None:
-        arg += " <{t}>".format(t=arg_type._name)
+        try:
+            arg += " <{t}>".format(t=arg_type.__name__)
+        except AttributeError:
+            arg += " <{t}>".format(t=arg_type._name)
     try:
         if not bool(string and string.strip()):
             validation_error = ValueError(
@@ -98,7 +104,10 @@ def non_null(obj: object, arg_name: str, arg_type: type = object):
     """
     arg = arg_name
     if arg_type is not None:
-        arg += " <{t}>".format(t=arg_type._name)
+        try:
+            arg += " <{t}>".format(t=arg_type.__name__)
+        except AttributeError:
+            arg += " <{t}>".format(t=arg_type._name)
     if obj is None:
         raise ValueError("Parameter `{arg}` cannot not be None".format(arg=arg))
 
@@ -129,7 +138,10 @@ def non_empty(obj: Sized, arg_name: str, arg_type: type = object):
     validation_error = None
     arg = arg_name
     if arg_type is not None:
-        arg += " <{t}>".format(t=arg_type._name)
+        try:
+            arg += " <{t}>".format(t=arg_type.__name__)
+        except AttributeError:
+            arg += " <{t}>".format(t=arg_type._name)
     try:
         if len(obj) == 0:
             validation_error = ValueError("Parameter `{arg}` cannot be empty".format(arg=arg))
@@ -166,7 +178,10 @@ def no_whitespaces(string: str, arg_name: str, arg_type: type = str):
     validation_error = None
     arg = arg_name
     if arg_type is not None:
-        arg += " <{t}>".format(t=arg_type._name)
+        try:
+            arg += " <{t}>".format(t=arg_type.__name__)
+        except AttributeError:
+            arg += " <{t}>".format(t=arg_type._name)
     try:
         if " " in string:
             validation_error = ValueError(
@@ -202,7 +217,10 @@ def non_negative(number: Number, arg_name: str, arg_type: type = str):
     validation_error = None
     arg = arg_name
     if arg_type is not None:
-        arg += " <{t}>".format(t=arg_type._name)
+        try:
+            arg += " <{t}>".format(t=arg_type.__name__)
+        except AttributeError:
+            arg += " <{t}>".format(t=arg_type._name)
     try:
         if number < 0:
             validation_error = ValueError(
