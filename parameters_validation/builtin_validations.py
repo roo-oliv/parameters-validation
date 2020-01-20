@@ -26,12 +26,8 @@ def strongly_typed(param: object, arg_name: str, arg_type: type):
     :raises TypeError: invalid parameter, i.e. :param param: has type that doesn't inherits from the expected :param arg_type:
     """
     validation_error = None
-    arg = arg_name
+    arg = _build_arg(arg_name, arg_type)
     try:
-        try:
-            arg += " <{t}>".format(t=arg_type.__name__)
-        except AttributeError:
-            arg += " <{t}>".format(t=arg_type._name)
         if not isinstance(param, arg_type):
             validation_error = TypeError("`{arg}` must be of type `{arg_type}`".format(arg=arg, arg_type=arg_type))
     except:  # TODO: fail at function definition time
@@ -64,12 +60,7 @@ def non_blank(string: str, arg_name: str, arg_type: type = str):
     :raises RuntimeError: unable to validate parameter (possibly :param string: is of an unexpected type)
     """
     validation_error = None
-    arg = arg_name
-    if arg_type is not None:
-        try:
-            arg += " <{t}>".format(t=arg_type.__name__)
-        except AttributeError:
-            arg += " <{t}>".format(t=arg_type._name)
+    arg = _build_arg(arg_name, arg_type)
     try:
         if not bool(string and string.strip()):
             validation_error = ValueError(
@@ -102,12 +93,7 @@ def non_null(obj: object, arg_name: str, arg_type: type = object):
     :return: None
     :raises ValueError: invalid parameter, i.e. :param obj: is of type `NoneType`
     """
-    arg = arg_name
-    if arg_type is not None:
-        try:
-            arg += " <{t}>".format(t=arg_type.__name__)
-        except AttributeError:
-            arg += " <{t}>".format(t=arg_type._name)
+    arg = _build_arg(arg_name, arg_type)
     if obj is None:
         raise ValueError("Parameter `{arg}` cannot not be None".format(arg=arg))
 
@@ -136,12 +122,7 @@ def non_empty(obj: Sized, arg_name: str, arg_type: type = object):
     :raises RuntimeError: unable to validate parameter (possibly the parameter is of an unexpected type)
     """
     validation_error = None
-    arg = arg_name
-    if arg_type is not None:
-        try:
-            arg += " <{t}>".format(t=arg_type.__name__)
-        except AttributeError:
-            arg += " <{t}>".format(t=arg_type._name)
+    arg = _build_arg(arg_name, arg_type)
     try:
         if len(obj) == 0:
             validation_error = ValueError("Parameter `{arg}` cannot be empty".format(arg=arg))
@@ -176,12 +157,7 @@ def no_whitespaces(string: str, arg_name: str, arg_type: type = str):
     :raises RuntimeError: unable to validate parameter (possibly :param string: is of an unexpected type)
     """
     validation_error = None
-    arg = arg_name
-    if arg_type is not None:
-        try:
-            arg += " <{t}>".format(t=arg_type.__name__)
-        except AttributeError:
-            arg += " <{t}>".format(t=arg_type._name)
+    arg = _build_arg(arg_name, arg_type)
     try:
         if " " in string:
             validation_error = ValueError(
@@ -215,12 +191,7 @@ def non_negative(number: Number, arg_name: str, arg_type: type = str):
     :raises RuntimeError: unable to validate parameter (possibly :param number: is of an unexpected type)
     """
     validation_error = None
-    arg = arg_name
-    if arg_type is not None:
-        try:
-            arg += " <{t}>".format(t=arg_type.__name__)
-        except AttributeError:
-            arg += " <{t}>".format(t=arg_type._name)
+    arg = _build_arg(arg_name, arg_type)
     try:
         if number < 0:
             validation_error = ValueError(
@@ -230,3 +201,13 @@ def non_negative(number: Number, arg_name: str, arg_type: type = str):
             "Unable to validate parameter `{arg}`: {error_name}{error}".format(arg=arg, error_name=e.__class__.__name__, error=e), e)
     if validation_error:
         raise validation_error
+
+
+def _build_arg(arg_name, arg_type):
+    arg = arg_name
+    if arg_type is not None:
+        try:
+            arg += " <{t}>".format(t=arg_type.__name__)
+        except AttributeError:
+            arg += " <{t}>".format(t=arg_type._name)
+    return arg
