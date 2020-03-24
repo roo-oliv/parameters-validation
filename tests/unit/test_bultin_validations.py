@@ -52,3 +52,19 @@ class TestBuiltinValidations:
     def test_strongly_typed_incorrect_usage(self):
         with pytest.raises(RuntimeError):
             bar("")
+
+    def test_unable_to_validate_non_blank(self):
+        with pytest.raises(RuntimeError):
+            foo(42, "", [None], "", 42, [1])
+
+    def test_unable_to_validate_non_empty(self):
+        with pytest.raises(RuntimeError):
+            foo("non-blank", "", None, "", 42, [1])
+
+    def test_unable_to_validate_no_whitespaces(self):
+        with pytest.raises(RuntimeError):
+            foo("non-blank", "", [None], None, 42, [1])
+
+    def test_unable_to_validate_non_negative(self):
+        with pytest.raises(RuntimeError):
+            foo("non-blank", "", [None], "", None, [1])
