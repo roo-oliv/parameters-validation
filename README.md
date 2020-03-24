@@ -69,6 +69,51 @@ def foo(df: log_to_debug(str)):
     # do something
 ```
 
+## Skipping validations
+
+For whatever reason, if one wants to skip validations a method `skip_validations` is
+appended to the decorated method. When called it will return the original method as if
+it wasn't decorated with `@validate_parameters`:
+
+```python
+from parameters_validation import no_whitespaces, validate_parameters
+
+@validate_parameters
+def foo(arg: no_whitespaces(str)):
+    print(arg)
+
+foo.skip_validations()("white   spaces")
+# prints: white   spaces
+```
+
+Note that, in the example, `foo.skip_validations()` does not changes `foo` itself but
+actually returns another function without the validation behaviour.
+
+## Testing
+
+In general, unit and integration tests should be fine with parameters validation
+validating input parameters though it might be the case one wants to mock some or all
+of the validations.
+
+Functions decorated with `@validate_parameters` are appended with a `mock_validations`
+method that accepts a dictionary mapping parameters to mock validations:
+
+```python
+from parameters_validation import no_whitespaces, validate_parameters
+
+@validate_parameters
+def foo(arg: no_whitespaces(str)):
+    print(arg)
+
+foo.mock_validations({"arg": lambda *_, **__: print("mocked")})("white   spaces")
+# prints: mocked
+# prints: white   spaces
+```
+
+Note that mock functions **must not** be decorated with `@parameter_validation`.
+Also, note that, in the example, `foo.mock_validations(...)` does not changes `foo`
+itself but actually returns another function with mocked behaviour. 
+
 ## When to validate parameters
 
 It is a pythonic convention follow the [EAFP](https://docs.python.org/3/glossary.html#term-eafp) principle whenever possible. There are cases however that skipping validations leads to silent errors and big headaches. Let's use an illustrative example:

@@ -16,7 +16,7 @@ extras = {
 
 setup(
     name='parameters-validation',
-    version='1.1.5',
+    version='1.2.0',
     packages=['parameters_validation'],
     url='https://github.com/allrod5/parameters-validation',
     license='MIT',
