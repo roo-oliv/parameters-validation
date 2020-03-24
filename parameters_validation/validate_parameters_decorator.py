@@ -66,6 +66,26 @@ def validate_parameters(func):
     ... foo("")                 # invalid, empty
     ... foo(None)               # invalid, none
 
+    Validations can be skipped with `.skip_validations()`:
+
+    >>> from parameters_validation import non_blank
+    ...
+    ... @validate_parameters
+    ... def foo(s: non_blank(str)):
+    ...     pass
+    ...
+    ... foo.skip_validations()("")  # does not throw since validations are skipped
+
+    Validations can be mocked for testing purposes with `.mock_validations({...})`:
+
+    >>> from parameters_validation import non_blank
+    ...
+    ... @validate_parameters
+    ... def foo(s: non_blank(str)):
+    ...     pass
+    ...
+    ... foo.mock_validations({"s": lambda *_: print("mocked")})("")  # prints "mocked"
+
     :param func: decorated function
     :return: wrapped function
     """
