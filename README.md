@@ -95,8 +95,9 @@ In general, unit and integration tests should be fine with parameters validation
 validating input parameters though it might be the case one wants to mock some or all
 of the validations.
 
-Functions decorated with `@validate_parameters` are appended with a `mock_validations`
-method that accepts a dictionary mapping parameters to mock validations:
+Beyond [skipping validation](#skipping-validations), functions decorated with
+`@validate_parameters` are appended with a `mock_validations` method that accepts a
+dictionary mapping parameters to mock validations:
 
 ```python
 from parameters_validation import no_whitespaces, validate_parameters
@@ -113,6 +114,27 @@ foo.mock_validations({"arg": lambda *_, **__: print("mocked")})("white   spaces"
 Note that mock functions **must not** be decorated with `@parameter_validation`.
 Also, note that, in the example, `foo.mock_validations(...)` does not changes `foo`
 itself but actually returns another function with mocked behaviour. 
+
+When testing the decorated function itself it may suffice just to call it with
+`mock_validations`, otherwise one can use the returned function to patch the original
+one. In this example we're patching a decorated function named `something`
+using [pytest](https://github.com/pytest-dev/pytest) and [pytest-mock](https://github.com/pytest-dev/pytest-mock/):
+
+```python
+from project.module import foo
+
+def test_something(mocker):
+    # given
+    arg_validation_mock = mocker.MagicMock()
+    mocked_something = foo.something.mock_validations({"arg": arg_validation_mock})
+    mocker.patch("project.module.foo.something", mocked_something)
+
+    # when
+    foo.something(42)
+
+    # then
+    arg_validation_mock.assert_called_once_with(42, "arg", None)
+```
 
 ## When to validate parameters
 
